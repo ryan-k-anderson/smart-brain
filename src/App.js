@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 // import Particles from 'react-particles-js';
-// import Clarifai from 'clarifai';
+// import ParticlesBg from 'particles-bg'
+import Clarifai from 'clarifai';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
 import Signin from './components/Signin/Signin';
@@ -11,52 +12,9 @@ import Rank from './components/Rank/Rank';
 import './App.css';
 
 //You must add your own API key here from Clarifai.
-// const app = new Clarifai.App({
-// apiKey: 'YOUR API KEY HERE'
-// });
-
-
-const clarifaiFaceDetection = (imageUrl) =>{
-    // Your PAT (Personal Access Token) can be found in the portal under Authentification
-    const PAT = '641d7010471649d49628983ae2b6e4b5';
-    // Specify the correct user_id/app_id pairings
-    // Since you're making inferences outside your app's scope
-    const USER_ID = 'draxxncynder';       
-    const APP_ID = 'test-face-detection';
-    // Change these to whatever model and image URL you want to use
-    // const MODEL_ID = 'face-detection';  
-    const IMAGE_URL = imageUrl;
-
-    ///////////////////////////////////////////////////////////////////////////////////
-    // YOU DO NOT NEED TO CHANGE ANYTHING BELOW THIS LINE TO RUN THIS EXAMPLE
-    ///////////////////////////////////////////////////////////////////////////////////
-
-    const raw = JSON.stringify({
-        "user_app_id": {
-            "user_id": USER_ID,
-            "app_id": APP_ID
-        },
-        "inputs": [
-            {
-                "data": {
-                    "image": {
-                        "url": IMAGE_URL
-                    }
-                }
-            }
-        ]
-    });
-    const requestOptions = {
-      method: 'POST',
-      headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Key ' + PAT
-      },
-      body: raw
-  };
-  return requestOptions
-}
-
+const app = new Clarifai.App({
+ apiKey: 'YOUR API KEY HERE'
+});
 
 // No Longer need this. Updated to particles-bg
 // const particlesOptions = {
@@ -78,7 +36,7 @@ class App extends Component {
       input: '',
       imageUrl: '',
       box: {},
-      route: 'home',
+      route: 'signin',
       isSignedIn: false,
       user: {
         id: '',
@@ -129,9 +87,7 @@ class App extends Component {
     // for the Face Detect Mode: https://www.clarifai.com/models/face-detection
     // If that isn't working, then that means you will have to wait until their servers are back up. 
 
-    // app.models.predict('face-detection', this.state.input)
-    fetch("https://api.clarifai.com/v2/models/" + 'face-detection' + "/outputs", clarifaiFaceDetection(this.state.input))
-    .then(response => response.json())
+    app.models.predict('face-detection', this.state.input)
       .then(response => {
         console.log('hi', response)
         if (response) {
@@ -166,7 +122,6 @@ class App extends Component {
     const { isSignedIn, imageUrl, route, box } = this.state;
     return (
       <div className="App">
-        {/* <ParticlesBg type="fountain" bg={true} /> */}
         <Navigation isSignedIn={isSignedIn} onRouteChange={this.onRouteChange} />
         { route === 'home'
           ? <div>
